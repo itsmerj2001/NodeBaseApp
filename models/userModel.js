@@ -43,13 +43,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   dob:{
-    type:Date
+    type:String
   },
-  // active: {
-  //   type: Boolean,
-  //   default: false,
-  //   select: false,
-  // },
   status: {
     type: String,
     enum: ["Pending", "Rejected", "Approved"],

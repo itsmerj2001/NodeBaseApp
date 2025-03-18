@@ -24,8 +24,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError("This Route is not for updating password", 400));
   }
-
-  const filteredBody = filterObj(req.body, "name", "dob");
+  const filteredBody = filterObj(req.body.payload, "name", "dob");
   const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
     new: true,
     runValidators: true,
@@ -127,3 +126,4 @@ exports.deleteUser = catchAsync(async (req, res) => {
     data: null,
   });
 });
+
