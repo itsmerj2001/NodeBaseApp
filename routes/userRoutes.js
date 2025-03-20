@@ -17,6 +17,7 @@ const {
   forgotPassword,
   resetPassword,
   updatePassword,
+  VerifyGoogleToken,
 } = require("../controllers/authController");
 
 const express = require("express");
@@ -29,11 +30,14 @@ router.post("/login", login);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword", resetPassword);
 router.patch("/updatePassword", protect, updatePassword);
+router.post('/verifyGoogleToken',VerifyGoogleToken);
 
 //  user activities
 router.patch("/updateMe", protect, updateMe);
 router.get('/fetchDetails',protect, fetchDetails);
 router.delete("/deleteMe", protect, deleteMe);
+
+
 
 // admin User activities
 // router.route("/").get(getAllUsers);

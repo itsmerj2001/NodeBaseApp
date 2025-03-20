@@ -5,6 +5,9 @@ const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const sendEmail = require("../utils/email");
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client('YOUR_GOOGLE_CLIENT_ID');
+
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -237,6 +240,39 @@ const updatePassword = catchAsync(async (req, res, next) => {
   });
 });
 
+const VerifyGoogleToken = catchAsync(async (req,res,next)=>{
+  const { idToken } = req.body;
+  if(!idToken){
+    return next(AppError("ID Token Missing..."));
+  }
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience:"721406346367-455o8860d4u6uda63496q6rjfbmlsnbf.apps.googleusercontent.com"
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload.sub; // Google ID
+    const userEmail = payload.email;
+    const userName = payload.name;
+
+    const user = await User.findOneAndUpdate(
+      {googleId:userId},{email:userEmail,name:userName},{upsert:true,new:true}
+    );
+
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+
+  }catch(err)
+  {
+    console.error('Error verifying Google token:', err);
+    return next(AppError("Error Verifying Google Token",500));
+  }
+
+});
+
 module.exports = {
   signup,
   login,
@@ -245,4 +281,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   updatePassword,
+  VerifyGoogleToken
 };

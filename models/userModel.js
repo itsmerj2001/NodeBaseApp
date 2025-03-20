@@ -50,6 +50,9 @@ const userSchema = new mongoose.Schema({
     enum: ["Pending", "Rejected", "Approved"],
     default: "Pending",
   },
+  googleId:{
+    type:String
+  },
 
   passwordChangedAt: Date,
   passwordResetToken: String,
